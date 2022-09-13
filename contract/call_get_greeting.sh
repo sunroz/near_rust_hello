@@ -27,3 +27,5 @@ near call $CONTRACT_ACCOUNT get_gas_info --accountId $MASTER_ACCOUNT
 near call $CONTRACT_ACCOUNT get_storage_usage --accountId $MASTER_ACCOUNT
 
 near call $CONTRACT_ACCOUNT get_storage_byte_cost --accountId $MASTER_ACCOUNT
+
+near call $CONTRACT_ACCOUNT get_total_storage_cost --accountId $MASTER_ACCOUNT

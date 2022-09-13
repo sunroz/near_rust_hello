@@ -7,7 +7,7 @@
  */
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{log, near_bindgen, AccountId, env, Gas};
+use near_sdk::{log, near_bindgen, AccountId, env, Gas, Promise};
 
 // Define the default message
 const DEFAULT_MESSAGE: &str = "Hello";
@@ -35,10 +35,18 @@ impl Contract {
     }
 
     // Public method - accepts a greeting, such as "howdy", and records it
+    #[payable]
     pub fn set_greeting(&mut self, message: String) {
+
+        let deposit = self.get_attached_deposit();
+        assert!(deposit >= 5, "Deposit at least 5 Near");
+
         // Use env::log to record logs permanently to the blockchain!
         log!("Saving greeting {}", message);
         self.message = message;
+
+
+        self.pay_total_storage_cost(deposit);
     }
 
     pub fn get_predecessor_account_id(&mut self) -> AccountId {
@@ -88,6 +96,35 @@ impl Contract {
         let storage_byte_cost = env::storage_byte_cost();
         log!("storage_byte_cost= {}", storage_byte_cost);
         storage_byte_cost
+    }
+
+    pub fn get_total_storage_cost(&mut self) -> u128 {
+        let storage = self.get_storage_usage();
+        let byte_cost = self.get_storage_byte_cost();
+
+        let total = u128::checked_mul(byte_cost, storage.into()).unwrap();
+        log!("get_total_storage_cost= {}", total);
+        total
+    }
+
+    #[payable]
+    pub fn pay_total_storage_cost(&mut self, deposit: u128) {
+        let current_storage = env::storage_usage();
+        let byte_cost = self.get_storage_byte_cost();
+        let account_id = self.get_predecessor_account_id();
+
+        // let payable_storage = u64::checked_sub(current_storage, initial_storage).unwrap();
+        // log!("payable_storage= {}", payable_storage);
+
+        let total_storage_cost = u128::checked_mul(byte_cost, current_storage.into()).unwrap();
+        log!("get_total_storage_cost= {}", total_storage_cost);
+
+        assert!(deposit > total_storage_cost, "insufficient balance");
+
+        let surplus = deposit - total_storage_cost;
+        log!("surplus= {}", surplus);
+
+        Promise::new(account_id).transfer(surplus);
     }
 
 }
