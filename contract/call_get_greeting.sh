@@ -13,4 +13,6 @@ near call near_rust_hello.sunroz.testnet get_current_account_id --accountId sunr
 
 near call near_rust_hello.sunroz.testnet get_attached_deposit --accountId sunroz.testnet
 
+near call near_rust_hello.sunroz.testnet get_attached_deposit --accountId sunroz.testnet --deposit 2
+
 near call near_rust_hello.sunroz.testnet get_account_balance --accountId sunroz.testnet

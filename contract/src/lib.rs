@@ -7,7 +7,7 @@
  */
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{log, near_bindgen, AccountId, env};
+use near_sdk::{log, near_bindgen, AccountId, env, Gas};
 
 // Define the default message
 const DEFAULT_MESSAGE: &str = "Hello";
@@ -20,7 +20,7 @@ pub struct Contract {
 }
 
 // Define the default, which automatically initializes the contract
-impl Default for Contract{
+impl Default for Contract {
     fn default() -> Self{
         Self{message: DEFAULT_MESSAGE.to_string()}
     }
@@ -70,6 +70,12 @@ impl Contract {
         let balance = env::account_balance();
         log!("get_account_balance= {}", balance);
         balance
+    }
+
+    pub fn get_gas_info(&mut self) -> (Gas, Gas) {
+        let prepaid_gas = env::prepaid_gas();
+        let used_gas = env::used_gas();
+        (prepaid_gas, used_gas)
     }
 
 }
