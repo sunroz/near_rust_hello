@@ -9,6 +9,8 @@ near call $CONTRACT_ACCOUNT get_storage_usage --accountId $MASTER_ACCOUNT
 
 echo ">> Executing fn set_greeting"
 
-near call $CONTRACT_ACCOUNT set_greeting '{"message" : "Learning Rust and Near protocol basics"}' --deposit 5 --accountId $MASTER_ACCOUNT
+near call $CONTRACT_ACCOUNT set_greeting '{"message" : "Hello World!"}' --accountId $MASTER_ACCOUNT
+
+near call $CONTRACT_ACCOUNT set_greeting_with_deposit '{"message" : "Learning Rust and Near protocol basics"}' --deposit 5 --accountId $MASTER_ACCOUNT
 
 # ./call_get_greeting.sh

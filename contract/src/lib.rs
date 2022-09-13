@@ -35,18 +35,27 @@ impl Contract {
     }
 
     // Public method - accepts a greeting, such as "howdy", and records it
-    #[payable]
     pub fn set_greeting(&mut self, message: String) {
+        // Use env::log to record logs permanently to the blockchain!
+        log!("Saving greeting {}", message);
+        self.message = message;
+    }
+
+    #[payable]
+    pub fn set_greeting_with_deposit(&mut self, message: String) {
 
         let deposit = self.get_attached_deposit();
         assert!(deposit >= 5, "Deposit at least 5 Near");
+
+        let initial_storage_used = self.get_storage_usage();
 
         // Use env::log to record logs permanently to the blockchain!
         log!("Saving greeting {}", message);
         self.message = message;
 
+        self.get_greeting();
 
-        self.pay_total_storage_cost(deposit);
+        self.pay_total_storage_cost(deposit, initial_storage_used);
     }
 
     pub fn get_predecessor_account_id(&mut self) -> AccountId {
@@ -108,15 +117,17 @@ impl Contract {
     }
 
     #[payable]
-    pub fn pay_total_storage_cost(&mut self, deposit: u128) {
+    pub fn pay_total_storage_cost(&mut self, deposit: u128, initial_storage: u64) {
         let current_storage = env::storage_usage();
         let byte_cost = self.get_storage_byte_cost();
         let account_id = self.get_predecessor_account_id();
 
-        // let payable_storage = u64::checked_sub(current_storage, initial_storage).unwrap();
-        // log!("payable_storage= {}", payable_storage);
+        log!("current_storage= {}", current_storage);
 
-        let total_storage_cost = u128::checked_mul(byte_cost, current_storage.into()).unwrap();
+        let payable_storage = u64::checked_sub(current_storage, initial_storage).unwrap();
+        log!("payable_storage= {}", payable_storage);
+
+        let total_storage_cost = u128::checked_mul(byte_cost, payable_storage.into()).unwrap();
         log!("get_total_storage_cost= {}", total_storage_cost);
 
         assert!(deposit > total_storage_cost, "insufficient balance");
