@@ -7,7 +7,7 @@
  */
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{log, near_bindgen};
+use near_sdk::{log, near_bindgen, AccountId, env};
 
 // Define the default message
 const DEFAULT_MESSAGE: &str = "Hello";
@@ -40,6 +40,37 @@ impl Contract {
         log!("Saving greeting {}", message);
         self.message = message;
     }
+
+    pub fn get_predecessor_account_id(&mut self) -> AccountId {
+        let id = env::predecessor_account_id();
+        log!("get_predecessor_account_id= {}", id);
+        id
+    }
+
+    pub fn get_signer_account_id(&mut self) -> AccountId {
+        let id = env::signer_account_id();
+        log!("get_signer_account_id= {}", id);
+        id
+    }
+
+    pub fn get_current_account_id(&mut self) -> AccountId {
+        let id = env::current_account_id();
+        log!("get_current_account_id= {}", id);
+        id
+    }
+
+    pub fn get_attached_deposit(&mut self) -> u128 {
+        let deposit = env::attached_deposit();
+        log!("get_attached_deposit= {}", deposit);
+        deposit
+    }
+
+    pub fn get_account_balance(&mut self) -> u128 {
+        let balance = env::account_balance();
+        log!("get_account_balance= {}", balance);
+        balance
+    }
+
 }
 
 /*
