@@ -78,6 +78,18 @@ impl Contract {
         (prepaid_gas, used_gas)
     }
 
+    pub fn get_storage_usage(&mut self) -> u64 {
+        let storage_usage = env::storage_usage();
+        log!("get_storage_usage= {}", storage_usage);
+        storage_usage
+    }
+
+    pub fn get_storage_byte_cost(&mut self) -> u128 {
+        let storage_byte_cost = env::storage_byte_cost();
+        log!("storage_byte_cost= {}", storage_byte_cost);
+        storage_byte_cost
+    }
+
 }
 
 /*
