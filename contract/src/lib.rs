@@ -59,6 +59,7 @@ impl Contract {
         id
     }
 
+    #[payable]
     pub fn get_attached_deposit(&mut self) -> u128 {
         let deposit = env::attached_deposit();
         log!("get_attached_deposit= {}", deposit);
